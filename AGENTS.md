@@ -1,8 +1,10 @@
 # Project context
 
 Read `docs/PRD.md`, `docs/TRD.md`, and `docs/DISCOVERY.md` before changing product
-scope. This phase establishes the Next.js foundation. The user will supply visual
-direction later; current colors and the home page are provisional scaffolding.
+scope. The Next.js foundation is complete; product discovery is ongoing. The first
+release is the inspiration browser, followed by an agent-focused page for Codex.
+Designeer is a reference whose relevant aspects remain to clarify; current colors
+and the home page are provisional scaffolding.
 
 ## Boundaries
 
@@ -11,7 +13,9 @@ direction later; current colors and the home page are provisional scaffolding.
 - Keep `src/content/` serializable and independent of rendering code. Reusable
   effects and presets belong in `src/registry/`.
 - The library serves people and coding agents. Agent delivery format is still
-  open; this file guides repository development and is not a distributable skill.
+  open. Codex is the first target; automatic library search is a desired workflow,
+  not an implemented discovery mechanism. This file guides repository development
+  and is not a distributable skill.
 - Shader engine, deployment, persistence, accounts, payments, and licensing are
   pending decisions. Choose dependencies when feature requirements justify them.
 - The inspiration list will need equivalent pointer, keyboard, and touch access.

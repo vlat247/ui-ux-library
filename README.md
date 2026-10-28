@@ -3,9 +3,10 @@
 A Next.js foundation for shaders, reusable design presets, and curated inspiration
 that people and coding agents can use in their own projects.
 
-**Current phase:** project setup and discovery. The home page is a neutral
-placeholder. The final design, launch collection, shader runtime, export formats,
-and agent delivery mechanism are still to be defined.
+**Current phase:** product discovery; the project foundation is complete. The
+first release will be the inspiration browser, followed by an agent-focused page
+for Codex. The home page is a neutral placeholder. Final design, launch content,
+shader runtime, export formats, and agent delivery mechanism remain to be defined.
 
 ## Start locally
 
@@ -50,11 +51,13 @@ publication will need an agreed format, dependencies, provenance, and licensing.
 ## Product direction
 
 - Reusable shaders, gradients, design presets, and design instructions.
-- Resources and skills that coding agents can discover and use.
+- Design rules, built-in colors, animations, and reusable sections for agents.
+- Codex first, with automatic library search as the desired later workflow.
 - A compact, scrollable inspiration list with expanding website previews.
 
 The inspiration interaction and all other product screens are future work.
-Visual direction is deferred until the user provides references.
+[Designeer](https://designeer.xyz/) is the current reference; which aspects to
+adopt and the final visual direction remain under discussion.
 See the [PRD](docs/PRD.md), [TRD](docs/TRD.md), and [discovery notes](docs/DISCOVERY.md).
 
 ## Commands

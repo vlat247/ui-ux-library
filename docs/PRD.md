@@ -1,128 +1,141 @@
 # ui-ux-library — Product requirements
 
-Version: 0.2 · Status: discovery draft · Updated: 2026-10-27
+Version: 0.3 · Status: discovery draft · Updated: 2026-10-28
 
-This document separates the confirmed product direction from proposed implementation requirements. The current phase is project setup and documentation; product screens, demos, and the final visual design are outside this phase. See [DISCOVERY.md](./DISCOVERY.md) for the decision record and [TRD.md](./TRD.md) for the technical design.
+This document separates confirmed direction from proposed requirements. Version one will be the inspiration browser; the agent-focused page follows later. Current work is discovery and specification; product UI implementation follows. See [DISCOVERY.md](./DISCOVERY.md) for the decision record and [TRD.md](./TRD.md) for the technical design.
 
 ## 1. What is confirmed
 
 - Working project name: **ui-ux-library**.
 - The application will use **Next.js**.
 - The product will include **shaders and reusable design presets**; gradients were part of the initial brief.
-- It serves people finding inspiration and ready designs, including people building with coding agents. **Coding agents must be able to use the library's resources and skills.**
+- Design presets mean **rules for agents with built-in colors**, similar to design templates, plus reusable animations, headers, footers, and other sections. Presets are not limited to complete website code.
+- It serves people finding inspiration and ready designs, including people building with coding agents. **Codex is the first supported agent** for the later agent-focused experience.
 - It will curate useful inspiration websites in **one compact, scrollable list**. Hovering a website should animate an enlarged preview that explains what the site is about.
+- **The inspiration browser is version one. The agent-focused page comes afterward.** Shader rendering, asset exports, skill delivery, and Codex integration are later-phase features.
 - Users should be able to take useful resources from the library easily. The exact asset formats and transfer mechanisms are undecided.
-- **For now, set up the project.** The user will describe the visual direction later.
+- The user tentatively prefers agents to **search the library automatically**. Discovery protocol and how an agent first learns where and how to search are unresolved.
+- The user supplied [designeer.xyz](https://designeer.xyz) as a reference and wants something similar. Which visual, content, or interaction aspects to use remains open; the reference does not approve a copied design.
 
-The three confirmed pillars are reusable visual resources, agent-friendly reuse, and curated inspiration. Their launch priority, depth, and content are undecided. No account system, paid tier, AI generation capability, or backend is required by the current brief.
+The long-term pillars remain reusable visual resources, agent-friendly reuse, and curated inspiration. Launch priority is now decided; exact version-one content and behavior are still being clarified. No account system, paid tier, AI generation capability, or backend is required by the current brief.
 
 ## 2. Product direction
 
 A library connecting visual inspiration with reusable designs, shaders, and instructions that people and coding agents can take into their projects.
 
-**Proposed journeys to refine:**
+**Proposed journeys to refine by phase:**
 
-- **Human reuse:** explore a design or shader → inspect its preview and usage → optionally customize supported values → take the resource → use it in a project.
-- **Agent reuse:** discover a suitable resource or skill → read structured usage and dependencies → retrieve the required assets/instructions → integrate and verify the result.
-- **Inspiration:** scroll the compact website list → hover or focus an entry → inspect its animated enlarged preview and description → visit the source website.
+- **Version one — inspiration:** scroll the compact curated list → hover or focus an entry → inspect its enlarged preview and description → visit the source website through an agreed click action.
+- **Later — human reuse:** explore a design preset, section, animation, or shader → inspect its rules/preview and usage → optionally customize supported values → take the resource → use it in a project.
+- **Later — Codex reuse:** discover a suitable design resource or skill → read its rules, colors, usage, and dependencies → retrieve the required assets/instructions → integrate and verify the result.
 
-Copying code can support these journeys, but it does not define the entire product. Downloadable assets, design instructions, and skills may also be relevant. Their format is still open.
+Copying code can support later reuse, but design rules, template colors, sections, animations, downloadable assets, and skills may also be relevant. Their exact formats are still open.
 
 ## 3. Decisions that shape the product
 
 | Decision | Options to discuss | Current status |
 | --- | --- | --- |
-| Product pillars | Shaders/design presets; agent-friendly resources/skills; curated inspiration list | Confirmed; first-release priority and depth remain open |
-| Audience | People finding inspiration and ready designs, including users of coding agents; agents as consumers | Confirmed; specific personas and supported agents remain open |
+| Release order | Inspiration browser first; agent-focused page afterward | Confirmed; detailed version-one scope remains open |
+| Product pillars | Shaders/design presets; agent-friendly resources/skills; curated inspiration list | Confirmed long-term direction |
+| Audience | People finding inspiration and ready designs, including users of coding agents | Confirmed; Codex is the first agent supported later |
 | Differentiation | A useful connection between inspiration, reusable designs, and agent use | Direction confirmed; selection standards and unique advantages need refinement |
-| Visual direction | References, typography, palette, density, and detailed motion | Deferred by the user until after setup |
-| Deliverable | CSS, React/Next.js components, shader source, design assets, instructions, or skills | Open |
-| Agent access | Structured manifests/static JSON, downloadable skill files, MCP, or another mechanism | Open; no protocol selected |
+| Visual direction | Reference: designeer.xyz; typography, palette, density, and detailed motion | Reference confirmed; desired aspects and original visual treatment remain open |
+| Inspiration coverage | Websites only, or websites alongside broader design resources | Open; useful websites are confirmed, broader inclusion is not |
+| Inspiration interaction | Enlarged hover preview with description | Direction confirmed; preview media, placement, and click behavior remain open |
+| Version-one tools | Search, categories/filters, favorites, and collection persistence | Open; none is implied by the release priority |
+| Preset definition | Agent rules with built-in colors, reusable animations, headers, footers, and other sections | Direction confirmed; exact packaging remains open |
+| Later deliverable | Design rules, templates, sections, CSS/React code, shader source, assets, or skills | Open exact formats; full website code is not the sole assumed format |
+| Later agent access | Automatic search preference; structured data, skill files, API, MCP, or another mechanism | Search preference tentative; protocol and bootstrap unresolved |
 | Content sourcing | Original presets, adapted resources, website links, authored descriptions, and preview imagery | Open; ownership, permission, and attribution must be recorded |
 | Distribution and access | Public website, repository, package; free/paid access and licensing | Open |
 
 ## 4. Phase and launch scope
 
-### Current phase — confirmed
+### Current work — discovery and documentation
 
-- Establish a maintainable Next.js project structure and a neutral placeholder home page.
-- Record product direction, open decisions, and technical boundaries in the PRD, discovery notes, and TRD.
-- Leave concrete product UI, shaders, demo pages, and final styling for a later implementation phase.
+- Use the existing Next.js setup and neutral placeholder as the foundation.
+- Record the newly confirmed priority, preset definition, first agent, reference, and open decisions.
+- Clarify version-one content and interaction before implementing product screens or final styling.
 
-### Launch scope — still to decide
+### Version one — inspiration browser
 
-The eventual product includes all three pillars. Choose the first complete path before implementation: a small shader/design collection with agent-readable reuse, the inspiration list first, or a thin end-to-end release across all three. Collection size, preview depth, customization, and supported export formats are pending.
+The first release focuses on the compact curated inspiration list, scrolling, expanding previews, site descriptions, and source navigation. The exact resource coverage, preview content, click behavior, search/filters, favorites, content sourcing, access model, and final presentation remain open.
 
-An editor for authoring effects from scratch, accounts, saved collections, community submissions, payments, AI generation, and package distribution are separate scope decisions. They are not implied by making the library useful to coding agents.
+### Later phase — agent-focused design library
+
+Provide the agent-focused page and Codex reuse of design rules, built-in color templates, animations, sections, and eventually shader resources. Automatic discovery is a tentative user preference, not a selected protocol. Rendering shaders, exporting resources, delivering skills, and validating Codex integration are outside version one.
+
+An editor for authoring effects from scratch, accounts, community submissions, payments, AI generation, and package distribution remain separate scope decisions. Favorites and persistence also require explicit version-one scope confirmation.
 
 ## 5. Proposed first-release behavior
 
-1. A visitor understands where to find shaders/design presets, agent resources, and inspiration websites.
-2. They inspect a selected resource, see a useful preview, and learn what they can take and how to use it.
-3. They copy or retrieve the approved output format; a coding agent can obtain equivalent resource instructions and dependencies through the selected access mechanism.
-4. Where customization is included, the retrieved result matches the selected values and can return to the authored preset.
-5. In the inspiration list, scrolling reveals useful sites; hovering an entry expands its preview with animation and shows its description. Opening a source site is an explicit action.
-6. The selected design or shader can be reproduced in a clean consumer project using its stated prerequisites.
+1. A visitor understands that the first release helps them explore curated inspiration.
+2. They scroll the compact list and identify entries worth inspecting.
+3. Hovering an entry animates a larger preview and explains what its website is about.
+4. Equivalent keyboard/touch interaction exposes the preview information.
+5. They follow the source through the agreed explicit click action. Whether an entry first opens details or directly opens the website remains a decision.
+6. If search, filters, or favorites are included after clarification, their behavior supports the same browse-to-source journey.
 
 The navigation, number of screens, expansion geometry, and final animation are deferred design decisions. Keyboard and touch equivalents are proposed below so the inspiration interaction does not depend on hover alone.
 
 ## 6. Proposed requirements and acceptance criteria
 
-All requirements below are **proposed for scope confirmation**. Their acceptance criteria describe how to verify an approved implementation; they do not claim that it exists today.
+All criteria below are **proposed for scope confirmation**. The phase column distinguishes first-release requirements from later capabilities; nothing here claims implementation. Version-one candidates need an explicit inclusion decision.
 
-| ID | Requirement | Acceptance criteria |
-| --- | --- | --- |
-| P-01 | Browse an authored resource collection | Each launch shader or design preset has a stable identifier, name, category, and preview. A visitor can inspect its usage. Empty and unavailable states are understandable. |
-| P-02 | Narrow the collection | A visitor can filter by the agreed launch categories and clear the filter. Search is included only if the collection warrants it. |
-| P-03 | Inspect a usable preview | The effect can be inspected beyond its gallery thumbnail. Preview controls and content stay usable at the agreed mobile and desktop sizes. |
-| P-04 | Customize supported parameters | Controls have labels, bounded values, and visible current values. Changes update the preview, and reset restores the authored preset. The supported controls are explicit for each resource. |
-| P-05 | Take a matching resource | The agreed copy/download output includes the required assets, selected parameter values, dependencies, and usage instructions. Transfer success or failure is communicated. A clean consumer project reproduces the selected resource using those instructions. |
-| P-06 | Understand integration needs | A resource states its output format, runtime requirements, relevant browser limitations, and the agreed license before a user adopts it. Unresolved licensing prevents a public release of affected resources. |
-| P-07 | Use the interface accessibly | Browsing, controls, reset, and copy work with a keyboard and accessible names. Focus is visible; interface text remains readable against effects; feedback is available to assistive technology. |
-| P-08 | Control animation | Animated resources respect reduced-motion preferences and provide a pause or static alternative. Essential information does not depend on animation. Effects are reviewed for distracting flashes. |
-| P-09 | Recover from rendering limitations | A failed or unsupported shader shows an explanatory fallback while navigation and source access remain usable. Shader previews stop unnecessary rendering when hidden and release graphics resources when removed. |
-| P-10 | Trust the collection | Each resource has reviewed source and a reproducible preset. Previews and copied implementations derive from the same parameter values; visible metadata accurately describes the resource. |
-| P-11 | Explore curated inspiration websites | A compact list scrolls through authored website entries. Each has a title, source URL, description, and approved preview content. Hovering an entry animates an enlarged preview and reveals what the site is about; following its source link requires an explicit action. Exact layout and animation await visual direction. |
-| P-12 | Access inspiration without hover | Keyboard focus and a touch action reveal equivalent preview information. Focus remains visible; expanded content does not trap navigation. Reduced motion preserves the information with a restrained or static transition. This interaction is proposed for accessibility. |
-| P-13 | Let coding agents discover and retrieve resources | The chosen mechanism exposes stable resource identifiers, descriptions, supported output formats, usage instructions, dependencies, provenance, and licensing. A representative supported agent can find and integrate a resource without undocumented steps. Protocol and supported agents remain open. |
-| P-14 | Reuse design skills and instructions | For any launch skill or instruction asset, a user or supported agent can retrieve its complete documented contents and required companion assets. The package's purpose, compatibility, and license are explicit. Skill format, installation, and delivery remain open. |
+| ID | Phase | Requirement | Acceptance criteria |
+| --- | --- | --- | --- |
+| P-01 | Later | Browse reusable designs and shaders | Each included resource has a stable identifier, name, category, preview or example, and documented usage. |
+| P-02 | V1 candidate | Search or filter inspiration | If included, the agreed search/filter controls return matching entries, can be cleared, and show an understandable no-results state. Fields and categories remain open. |
+| P-03 | Later | Inspect a reusable resource | The design, section, animation, or effect can be inspected beyond a thumbnail, with its rules and prerequisites. |
+| P-04 | Later | Customize supported parameters | Included controls have labels, bounded values, visible values, and reset. Preview and retrieved output reflect the same configuration. |
+| P-05 | Later | Take a matching resource | Approved output contains the required rules/assets, selected values, dependencies, and usage instructions. A clean consumer project can reproduce it. |
+| P-06 | Later | Understand integration and reuse | Each resource states its format, runtime needs, limitations, and agreed license before adoption. |
+| P-07 | V1; later reuse | Use the interface accessibly | Browsing and source navigation work with a keyboard and accessible names. Focus and interface text remain visible. Any later controls and transfer feedback meet the same baseline. |
+| P-08 | V1; later reuse | Control motion | Preview expansion respects reduced-motion preferences and preserves information without animation. Later animated assets provide a pause or static alternative; essential information does not depend on motion. |
+| P-09 | Later | Recover from shader limitations | Unsupported or failed graphics show an understandable fallback. Offscreen previews stop unnecessary rendering; removed previews release graphics resources. |
+| P-10 | Later | Trust reusable output | Resource rules/source and preset values are reviewed and reproducible. Any preview and retrieved implementation use the same authored configuration. |
+| P-11 | V1 | Explore curated inspiration websites | A compact list scrolls through entries with a title, source URL, description, and approved preview content. Hovering animates an enlarged preview and reveals what the site is about. Source navigation follows the agreed explicit click action. |
+| P-12 | V1 | Access inspiration without hover | Keyboard focus and an agreed touch action reveal equivalent information. Expanded content does not trap navigation or obscure its active target. This is a proposed accessibility requirement. |
+| P-13 | Later | Let Codex discover and retrieve resources | The selected access mechanism exposes stable IDs, descriptions, formats, design rules, dependencies, provenance, and licensing. Codex can retrieve and integrate a representative resource using documented steps. Automatic search, protocol, and bootstrap need separate definition. |
+| P-14 | Later | Reuse agent design presets and skills | A preset can describe design rules and built-in colors, and identify its reusable sections or animations. Codex can retrieve complete instructions and companion assets in the selected format. Skill packaging and delivery remain open. |
+| P-15 | V1 | Trust inspiration entries | Included links work; descriptions accurately identify the source; preview imagery has recorded provenance and approved use. Missing previews fail gracefully. A maintenance owner/workflow is recorded. |
+| P-16 | V1 candidate | Save favorites | If included, users can save/remove entries and understand where the selection persists. Storage, cross-device behavior, and whether an account is needed remain open; favorites are not yet committed scope. |
 
-## 7. Visual direction — deferred
+## 7. Visual direction — reference supplied, details open
 
-- The user will supply visual direction later. No visual answers are needed for the setup phase.
+- **Reference:** [designeer.xyz](https://designeer.xyz), supplied by the user as something similar to the intended product. Desired aspects still need clarification; no claims about its contents or features are adopted here.
 - **Confirmed interaction direction:** a compact scrollable inspiration list with beautifully animated expansion on hover, showing what each website is about.
-- **Desired impression and references:** pending the later design discussion.
+- **Reference intent:** clarify whether similarity means layout, compact browsing, resource coverage, previews, motion, or overall visual mood.
 - **Theme and palette:** open; gradients in the content do not determine the interface theme.
 - **Typography and density:** open.
 - **Motion:** separate the motion of the interface from animation inside resources.
-- **Preview composition:** decide whether effects appear as full surfaces, small swatches, or realistic usage examples.
+- **Version-one preview composition:** screenshot, video, authored image, or another format; source, placement, timing, and touch behavior remain open.
 - **Content tone and naming:** open.
 
 ## 8. Validation
 
-After the launch scope is agreed, validation should cover the selected human and agent journeys:
+Version-one validation should cover the inspiration journey:
 
-- Can they identify a useful resource and explain what the product offers?
-- Can they find and take a useful shader, design preset, or skill without assistance?
-- Can a supported coding agent discover, retrieve, and integrate a resource from its documented access mechanism?
-- Does retrieved output reproduce the chosen appearance in a clean project?
-- Does the inspiration list make it easy to inspect and visit relevant websites with pointer, keyboard, and touch input?
-- Which integration details or controls are missing?
-- Do keyboard, reduced-motion, mobile, and unsupported-renderer experiences remain usable?
+- Can a visitor identify the collection's purpose and find a relevant source?
+- Is the compact list easy to scroll, inspect, and navigate with pointer, keyboard, and touch?
+- Does preview expansion make the site easier to understand without disrupting browsing?
+- Are descriptions accurate, sources easy to open, and missing preview states understandable?
+- If included, do search, filters, and favorites help complete the same task?
 
-Record task completion, time to a working integration, agent retrieval/integration failures, points of confusion, rendering failures, and transfer failures during the agreed validation method. Set numerical targets after defining the launch scope and baseline. Production analytics and any associated data collection are separate decisions.
+Record browse-to-source task completion, time to a relevant source, navigation mistakes, points of confusion, broken links, and preview failures. Set numerical targets after defining content and a baseline. Production analytics and associated data collection remain separate decisions.
 
-## 9. Release exit criteria
+Later-phase validation will check Codex discovery/retrieval/integration, faithful design rules and colors, exported output, shader fallbacks, and resource cleanup. Those checks do not block version one.
 
-- The primary job, audience, visual direction, and launch scope are explicitly agreed.
-- Included requirements have passed their acceptance criteria; deferred items are recorded.
-- All launch resources have complete metadata, reviewed provenance and licensing, accurate previews, and verified output.
-- Included inspiration entries have valid source links, accurate descriptions, and approved preview content.
-- The selected agent access path is documented and verified with a representative supported agent.
-- The core journey works at the agreed responsive sizes and input methods.
-- Motion preferences, shader fallbacks, and resource cleanup have been checked on the agreed browser/device matrix.
+## 9. Version-one release exit criteria
+
+- Website/resource coverage, reference intent, preview media, click behavior, and included browsing tools are agreed.
+- Included V1 requirements pass their acceptance criteria; candidate features have explicit include/defer decisions.
+- Curated entries have valid links, accurate descriptions, approved preview content, and recorded sourcing/attribution.
+- The inspiration journey works at agreed responsive sizes with pointer, keyboard, touch, and reduced motion.
+- Missing/failed previews and empty states remain usable; content maintenance is documented.
+- The version-one access model and required content rights are resolved.
 - The chosen deployment passes the project build and required quality checks.
-- Remaining limitations and usage prerequisites are documented.
+- Remaining limitations are documented. Agent delivery, Codex integration, shader rendering, exports, and skills are deferred rather than first-release gates.
 
 ## 10. Revision notes
 
@@ -130,3 +143,4 @@ Record task completion, time to a working integration, agent retrieval/integrati
 | --- | --- |
 | 0.1 | Initial discovery draft based on the brief; product choices and launch scope remain open. |
 | 0.2 | Recorded the confirmed three pillars and audience; deferred visual direction and limited current work to setup/documentation. Agent protocol, launch priority, formats, licensing, and sourcing remain open. |
+| 0.3 | 2026-10-28: confirmed inspiration browser as V1, agent page afterward, Codex first, and presets as design rules/colors plus reusable sections/animations. Recorded tentative automatic search and designeer.xyz reference without selecting a protocol or final design. |
