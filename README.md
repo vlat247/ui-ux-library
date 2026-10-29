@@ -4,8 +4,10 @@ A Next.js foundation for shaders, reusable design presets, and curated inspirati
 that people and coding agents can use in their own projects.
 
 **Current phase:** product discovery; the project foundation is complete. The
-first release will be the inspiration browser, followed by an agent-focused page
-for Codex. The home page is a neutral placeholder. Final design, launch content,
+first release will have a Useful Sites tab with an expanding compact list, and an
+Inspiration tab for designs, design solutions, short animation videos, and
+interactive websites (working names). An agent-focused page for Codex follows.
+The home page is a neutral placeholder. Final design, launch content,
 shader runtime, export formats, and agent delivery mechanism remain to be defined.
 
 ## Start locally
@@ -53,11 +55,19 @@ publication will need an agreed format, dependencies, provenance, and licensing.
 - Reusable shaders, gradients, design presets, and design instructions.
 - Design rules, built-in colors, animations, and reusable sections for agents.
 - Codex first, with automatic library search as the desired later workflow.
-- A compact, scrollable inspiration list with expanding website previews.
+- A separate Useful Sites tab with a compact, scrollable list and animated row expansion.
+- Another tab for interesting designs, design solutions, short animation clips,
+  interactive website examples, and cool design posts from X/Twitter.
+- An initial owner-curated collection, plus link submissions from signed-in
+  visitors. Submissions become public only after the owner's approval.
+- Google and email sign-in; email flow and auth provider remain to be selected.
+- Search, category/content-type filters, Curated/Recently added sorting, and
+  account-saved favorites with a Saved filter.
+- Pleasant browsing with polished visual design and motion.
 
 The inspiration interaction and all other product screens are future work.
-[Designeer](https://designeer.xyz/) is the current reference; which aspects to
-adopt and the final visual direction remain under discussion.
+[Designeer](https://designeer.xyz/) is the current reference; the user selected
+the original expanding list. Final visual direction remains under discussion.
 See the [PRD](docs/PRD.md), [TRD](docs/TRD.md), and [discovery notes](docs/DISCOVERY.md).
 
 ## Commands
@@ -82,4 +92,6 @@ font download services. The current theme follows the OS and is provisional.
 
 The setup follows the [Next.js installation guide](https://nextjs.org/docs/app/getting-started/installation)
 and [Tailwind Next.js integration](https://tailwindcss.com/docs/installation/framework-guides/nextjs).
-Deployment, licensing, accounts, persistence, and monetization remain open.
+Accounts and owner approval are required for submissions; their implementation,
+email sign-in flow, auth provider, storage, deployment, licensing, and monetization
+remain open. Public browsing with login for saving/submitting is the proposed default.
