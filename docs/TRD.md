@@ -1,334 +1,199 @@
 # Technical requirements — UI/UX Library
 
-Status: discovery draft · Updated: 2026-10-29
+Status: local V1 implemented; production setup remains · Updated: 2026-10-29
 
-The project foundation is complete. The current task is product discovery, with
-the inspiration browser selected for the first release and an agent-focused page afterward.
-The first release has separate Useful Sites and Inspiration sections (working names).
-The user selected the original expanding-list interaction; exact styling remains open.
-This document distinguishes the starter foundation from requirements for the future product.
-No catalog interface, effect renderer, shader engine, or inspiration interaction is implemented by this setup.
+This document describes the code currently in the repository, its validation requirements,
+and later work. The application is implemented locally; no public deployment or completed
+Google OAuth exchange is claimed. See [BACKEND.md](./BACKEND.md) for the detailed backend
+contract and [CONTENT.md](./CONTENT.md) for source/media provenance.
 
-## 1. Confirmed product requirements
+## 1. Implemented V1
 
-- Build with Next.js.
-- Include gradients, shaders, and reusable design presets.
-- Serve people browsing and reusing assets, and coding agents consuming assets or skills.
-- Provide a separate Useful Sites tab with a compact, scrollable, curated list.
-- Expand useful-site entries within the original list on hover, with useful
-  preview information and descriptions.
-- Provide another tab for interesting designs, design solutions, short animation
-  videos, and interactive website examples. Its exact feed/list layout is still open.
-- Make the experience pleasant to browse, with polished styling and motion.
-- Include cool design posts from X/Twitter in the Inspiration collection.
-- Start with an owner-curated collection and let visitors submit links in V1.
-- Require an account to submit links and owner approval before publication.
-- Offer Google and email sign-in. The email flow and identity provider are not selected.
-- Include metadata search, category/content-type filters, Curated/Recently added
-  sorting, and account-saved favorites as the selected V1 browsing tools.
-- Ship the inspiration browser first; build the agent-focused page afterward.
-- Support Codex first for agent consumption, with automatic library search as the desired workflow.
-- Define design presets as reusable rules and built-in colors, with animations,
-  headers, and other page sections; complete website code is not required by the brief.
-- Use [Designeer](https://designeer.xyz/) as a reference while clarifying which aspects to adopt.
+- Public Inspiration and Useful Sites collections with shareable URL query state.
+- Metadata search scoped to the active collection, category/content-type filters,
+  Curated/Recently added ordering, counts, reset, and empty states.
+- Original in-place Useful Sites expansion for mouse hover, keyboard focus, and touch/click.
+- Responsive Inspiration grid, detail previews, source links, and creator context.
+- Private account favorites with Saved filtering and durable server storage.
+- Real email/password signup, sign-in, sign-out, and sessions through Better Auth.
+- Optional Google OAuth, enabled only when both credentials are configured.
+- Authenticated link submission with pending/approved/rejected states and owner-only review.
+- Sixteen editable starter entries, including three original local motion clips and posters.
 
-The mechanism for agent consumption and initial discovery is unresolved: structured
-manifests, downloadable files, skills/plugins, an API, and MCP are candidates rather
-than selected technologies. Automatic search is a desired user experience, not a
-guarantee that an unconfigured Codex session will discover the library.
-Keyboard and touch behavior for inspiration expansion must accompany the requested hover interaction.
-Product routes, rendering engines, export formats, authentication implementation,
-and commercial features remain open. Accounts are required for submissions;
-public browsing with authentication for saving and submitting is the proposed default.
-Shader rendering and agent integration do not gate the first inspiration-browser release.
+Accounts are required to save or submit. Browsing is public in the current implementation.
+The account/provider/storage choices below are implementation decisions, distinct from the
+user's explicit requirements for Google/email sign-in and owner-approved submissions.
 
-## 2. Starter baseline
+## 2. Stack and runtime
 
-| Area | Setup scope | Future work |
-| --- | --- | --- |
-| Application | Next.js App Router, TypeScript, neutral starter page | Product pages and interactions |
-| Content | Local content boundaries and initial TypeScript contracts | Catalog entries, presets, curation workflow |
-| Components | Shared UI and preview directories | Actual product components and renderers |
-| Graphics | Lifecycle guidance only | Shader engine selection and effect implementations |
-| Agent access | Architecture discussion only | A validated delivery contract and implementation |
-| Storage | Repository files for the empty starter | Durable account/submission state required for V1; backend not selected |
-| Identity and review | No implementation | Google/email sign-in, authenticated saves/submissions, owner-controlled publication |
+| Area | Current implementation |
+| --- | --- |
+| Runtime | Node.js 24; required for `node:sqlite` and the owner provisioning command |
+| Application | Next.js 16.4.3 App Router, React/React DOM 19.3.0, strict TypeScript |
+| Styling | Tailwind CSS 4 integration, native CSS, shared OKLCH tokens, system fonts |
+| Identity | Better Auth 1.7.x; exact installed version recorded in the lockfile |
+| Persistence | Node.js `DatabaseSync`, SQLite WAL, foreign keys, busy timeout |
+| UI primitives | Native dialogs, Radix icons, small client component boundaries |
+| Tooling | pnpm 10.29.3, ESLint 9, TypeScript 5, tsx for local scripts/tests |
 
-No backend/authentication provider, database, payment service, graphics library,
-or other external service has been selected.
-Account-based submissions and owner approval are now required product capabilities;
-this does not select their providers or claim an implemented service.
-The starter page exists to verify the project can run, not to establish the product design.
+Pages/layouts remain Server Components by default. Client components own search/filter state,
+media controls, dialogs, and authenticated actions. Server-only modules hold auth/config/SQL;
+credentials and owner configuration are not passed to browser components.
 
-## 3. Stack and configuration
-
-- Next.js `16.4.3`, React and React DOM `19.3.0`, as pinned in `package.json`.
-- TypeScript 5, strict mode, and the `@/*` import alias pointing to `src/*`.
-- Tailwind CSS 4 and the generated `@tailwindcss/turbopack` integration; native CSS remains available.
-- ESLint 9 with `eslint-config-next` matching the Next.js version.
-- pnpm `10.29.3`; commit the generated lockfile after installation.
-- System fonts; builds must not require remote font downloads.
-
-Package ranges and the generated lockfile determine installed tooling versions.
-`next.config.ts` retains the generated Tailwind CSS loader integration. Optional
-Cache Components and partial prefetching are left disabled until a feature needs them.
-Consult the [Next.js installation documentation](https://nextjs.org/docs/app/getting-started/installation)
-and [Tailwind Next.js guide](https://tailwindcss.com/docs/installation/framework-guides/nextjs) when changing the setup.
-
-## 4. Folder boundaries
+## 3. Routes and module boundaries
 
 ```text
-src/
-  app/
-    layout.tsx                       # Application document and shared layout
-    page.tsx                         # Neutral setup page
-    globals.css                      # Baseline styles
-  features/
-    library/types.ts                 # Initial library contracts
-    inspiration/types.ts             # Initial inspiration contracts
-  content/
-    library.ts                       # Empty typed resource collection
-    inspiration.ts                   # Empty typed inspiration collection
-    README.md                        # Content authoring and provenance guidance
-  components/
-    ui/                              # Shared interface component boundary
-    previews/                        # Interactive effect preview boundary
-  lib/
-    site.ts                          # Shared site metadata
-  registry/README.md                 # Reusable effect and preset source boundary
-  shaders/README.md                  # Proposed graphics lifecycle requirements
-public/
-  previews/                          # Preview and fallback media boundary
-docs/
-  PRD.md
-  TRD.md
-  DISCOVERY.md
+src/app/
+  page.tsx                         # Server shell and initial query/seed data
+  review/page.tsx                   # Owner review shell
+  api/auth/[...all]/route.ts        # Better Auth handlers
+  api/{entries,me,favorites}/       # Public collection and private account state
+  api/submissions/                 # Submission create/list and owner decisions
+src/features/
+  discovery/                      # Browser UI, previews, query logic/types/tests
+  account/                        # Auth, submit, account, and review interfaces
+src/components/dialog.tsx         # Native dialog wrapper
+src/content/entries.ts            # Sixteen serializable starter entries
+src/lib/
+  auth-client.ts                   # Browser auth client
+  server/                         # Config, sessions, validation, migrations, store
+src/registry/                     # Future reusable effects/presets; no renderer
+src/shaders/                      # Future graphics lifecycle guidance
+public/previews/                  # Three original MP4/JPEG pairs
+scripts/
+  create-owner.ts                 # Local-only, interactive owner provisioning
+  backend.test.ts                 # Isolated real-session/SQLite integration tests
+  generate-previews.py            # Deterministic procedural media generator
 ```
 
-`app` owns routing and page composition; reusable effects should not be embedded in route files.
-`features` owns contracts and workflows; `content` owns serializable authored metadata.
-`registry` will own reusable effects and presets; `components/previews` will own browser interaction.
-`shaders` holds lifecycle guidance now and can hold shared graphics support later.
-The initial `LibraryItem` and `InspirationSite` types are scaffolding, not complete publication contracts.
-Do not add a plugin framework, central state store, or service layer before requirements justify it.
+The two browsing areas are `/?section=inspiration` and `/?section=sites`, with additional
+`q`, `category`, `type`, `sort`, and `saved` query values. Query parsing constrains accepted
+values; filtering/sorting is a pure function. Section changes reset search/category/type.
+The owner interface is `/review`; it checks account identity before requesting the queue.
+Ordinary members see an access message there without a queue request.
 
-## 5. Proposed routing and rendering
+The remaining `features/library` and `content/library.ts` starter contracts are future preset
+boundaries, not additional live product interfaces. `registry` and `shaders` are later-phase
+boundaries rather than working exports or graphics integrations.
 
-Only `/` is part of the current setup. Candidate future routes are `/library`,
-`/library/[slug]`, and `/inspiration`; names and page responsibilities require product confirmation.
-Two separate browser sections/tabs are now confirmed, but their route names and
-whether tab selection is represented in the URL remain implementation decisions.
-Pages, layouts, catalog descriptions, and metadata should remain Server Components by default.
-Use small client boundaries for interactive controls, graphics, and browser APIs, following the
-[Next.js server/client component model](https://nextjs.org/docs/app/getting-started/server-and-client-components).
+## 4. Content and previews
 
-Catalog metadata must be serializable and importable without importing graphics runtimes.
-A future manifest should reference item identifiers and content rather than execute preview components.
-Resolve unknown item slugs to a not-found response.
-When implementing detail routes, await the route `params` before reading `slug`, following the
-[dynamic route documentation](https://nextjs.org/docs/app/api-reference/file-conventions/dynamic-routes).
-Keep agent delivery independent from visual page layouts so it can evolve without parsing rendered HTML.
+`DiscoveryEntry` metadata is serializable and independent of rendering code. The public
+collection combines `seedEntries` with approved submissions. Pending/rejected submissions
+are excluded from collection results and favorite responses. Search covers title,
+description, tags, source label/URL, and creator text; all search terms must match.
 
-### Proposed first-release content boundaries
+The starter contains 10 useful sites, three original motion studies, and three linked
+interactive websites. It is editable seed content, not the owner's supplied collection.
+There are no invented X posts, popularity counts, or copied reference-site listings.
+External sources use illustrated covers labelled as such in details; they are not screenshots
+or live embeds. Approved visitor links get generic artwork without invented media/creators.
 
-Keep the useful-site directory separate from the inspiration collection. A resource
-site helps visitors find a useful destination; an inspiration entry demonstrates an
-interesting design, design solution, animation, or interactive website.
+The three local MP4s are silent four-second loops at 720 × 480/24 fps, H.264/yuv420p with
+fast-start metadata. JPEG posters support still previews. Mouse hover can play a preview
+unless reduced motion is requested; detail dialogs expose native playback controls.
+Intersection/visibility handlers pause offscreen and background playback and clean up on
+unmount. Keyboard/touch users open the detail dialog to access playback controls.
+See [CONTENT.md](./CONTENT.md) for verification, source links, and regeneration details.
 
-The current `InspirationSite` type and empty collection only scaffold website
-metadata. They do not yet model videos or a mixed inspiration collection.
-When implementation begins, define serializable entry types with explicit media
-kinds, source URLs, descriptions, tags, and optional creator/preview metadata.
-The two collections can share visual primitives without sharing an ambiguous data model.
-Choose file storage or a content service from the agreed curation workflow; none
-is selected by the two-tab requirement alone.
+## 5. Authentication and owner access
 
-The user confirmed design posts from X/Twitter as a content source. An X API,
-automatic social import/scraping, and a specific embed or media-ingestion mechanism
-are not selected. Choose preview presentation and source linking during design.
+Better Auth stores real identities/sessions in SQLite. Email/password signup and sign-in
+work locally. Google OAuth is wired through the provider integration but disabled without
+both `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. The callback is
+`<BETTER_AUTH_URL>/api/auth/callback/google`; a configured external exchange still needs
+verification with the actual deployment origin and Google project.
 
-### Visitor link submissions — planned V1 capability
+Owner authorization requires the exact configured `OWNER_EMAIL`, compared after trimming
+and lowercasing, plus a verified identity. There is no first-user promotion. Public
+email/password signup cannot claim the reserved owner address. A verified matching Google
+identity can qualify; local email/password owner access uses `pnpm owner:create`.
 
-The owner supplies the initial collection; visitors can submit additional links.
-Submission persistence and publication are separate from the curated public
-collections. The current scaffold implements neither a form nor a submission service.
+The provisioning command reads the ignored local environment, asks the owner for a hidden
+password and confirmation, and creates the verified account. It refuses to replace an
+existing account. No public provisioning endpoint, preset owner password, or real owner
+address belongs in source/docs. The owner must perform this setup; documenting the command
+does not mean an owner password has been created.
 
-**Confirmed workflow:** the visitor signs in, submits a link, and waits for the
-owner's approval. A submission cannot appear in the public collection before approval.
-Signing in does not grant permission to approve or publish a submission.
+No SMTP delivery, ordinary-account email verification delivery, password-reset delivery,
+one-time email link/code flow, or media upload/import service is configured.
 
-**Proposed implementation:** collect a URL with enough context to classify it as
-a useful site or inspiration example, acknowledge receipt, and provide an owner
-review queue. Pending, approved, and rejected are candidate internal states; exact
-labels, rejection feedback, and editing behavior remain open. Required fields,
-the email sign-in flow, provider, duplicate handling, storage, and review UI are undecided.
+## 6. API and publication behavior
 
-Google and email are the confirmed sign-in methods. Email/password versus an
-email code/link remains open; no authentication provider has been selected.
-
-Select a durable submission destination from that workflow; repository-backed
-public content alone does not define a way to receive visitor submissions.
-When implementing, enforce signed-in submission and owner-only approval on the
-server, and exclude pending submissions from public collection queries. Validate
-submitted data and treat links as data rather than instructions. Whether metadata
-is fetched is a separate choice. Public browsing is the proposed default, with
-authentication required for private saves and visitor submissions.
-
-### Selected V1 browsing tools and proposed data handling
-
-The user delegated selection of the most useful browsing tools from the reference.
-Direct inspection of [Designeer](https://designeer.xyz/inspiration) on 2026-10-29
-showed search, category filters, favorites, and Curated/Recently added sorting,
-alongside additional tools. The selected subset for this product is:
-
-- Search the active collection by name, description, tags, and source/domain.
-- Filter by authored category; Inspiration also supports its design/clip/interactive
-  content types. Exact taxonomy follows the initial curated entries.
-- Sort by Curated editorial order or Recently added publication date.
-- Save/remove favorites within an account and use a Saved-only filter in either section.
-- Show result counts, clear-filter actions, and useful empty/no-result states.
-- Preserve clear original-source and creator links alongside previews.
-
-**Proposed implementation:** keep search/filter/sort state in validated URL parameters;
-keep hover expansion and media playback transient in client components. Start with
-typed metadata queries rather than selecting an external search service upfront.
-All public results and counts must use published entries only. Use a stable
-editorial order and publication timestamp so both sorting modes are deterministic.
-
-Private favorites need durable account-scoped storage with one record per user/entry.
-Use stable internal entry and user identifiers, enforce ownership on the server, and
-preserve the user's browsing context through sign-in. A Saved filter never grants
-access to another person's collection. Define unavailable-entry behavior if content
-is unpublished. These capabilities are planned; no favorites service exists yet.
-
-Folders, color filtering, popularity rankings, advanced recommendations, and an
-extra view toggle are deferred. Useful Sites retains its confirmed expanding list.
-
-## 6. Proposed source and export contract
-
-This section concerns the later agent/resource phase. No effect export is implemented.
-Presets should carry design instructions and color values, and may reference reusable
-animations, headers, and other sections. CSS, React source, shader source, and packaged
-skills are possible companion formats; their exact packaging is still open.
-Each future item should declare its identifier, category, description, requirements, and licensing information.
-Use deterministic, serializable configuration where practical.
-When preview and export are added, derive both from the same configuration and generation functions.
-Avoid maintaining separate example code that silently differs from the actual preview implementation.
-Validate portable manifests against a versioned contract once an external consumer exists.
-Do not expose arbitrary code execution merely to provide an editable preview.
-
-### Later Codex discovery workflow
-
-**Desired behavior:** a user requests a design, Codex searches this library, retrieves
-a suitable preset's rules, colors, and relevant sections, then applies them to the project.
-The user named Codex as the first target; automatic search was expressed as a tentative preference.
-
-**Proposal:** keep a searchable, machine-readable index and stable per-resource
-documentation independent of the visual inspiration interface. An agent-facing page
-can explain access and reuse when that phase begins. Neither the index nor the page exists yet.
-
-Codex can select an available skill when a task matches its description; the official
-documentation describes local skill discovery and distribution through plugins.
-That behavior concerns skills available to Codex, rather than arbitrary websites.
-See [OpenAI's skill documentation](https://learn.chatgpt.com/docs/build-skills).
-Decide later whether users introduce the library through a link, repository instructions,
-an installed skill/plugin, or a configured service. The discovery step must be tested
-with a representative Codex setup before automatic access is promised.
-
-## 7. Proposed shader lifecycle
-
-No graphics dependency has been chosen.
-Canvas/WebGL, a focused shader library, or a scene library are candidates depending on actual effects.
-WebGPU support is a separate compatibility decision; Three.js or another engine is not assumed.
-Choose after agreeing on representative effects, target devices, licensing, and portability requirements.
-
-Future graphics previews must:
-
-- Initialize browser graphics inside client components and load expensive renderers on demand.
-- Keep lists lightweight through static thumbnails, posters, or limited active previews.
-- Pause when offscreen, when the document is hidden, and when the user requests a pause.
-- Respect reduced-motion preferences and provide a still representation.
-- Bound canvas resolution and pixel ratio; measure quality settings on target devices.
-- Cancel animation frames, disconnect observers, remove listeners, and dispose GPU resources on unmount.
-- Handle unsupported graphics, failed initialization, and lost rendering contexts gracefully.
-- Preserve readable DOM content and accessible controls independently of a graphics surface.
-
-Numeric frame-rate, memory, and bundle budgets remain pending an agreed device and effect baseline.
-
-## 8. Future interface requirements
-
-The Useful Sites list should support scrolling and expanding entries on hover as requested.
-Provide equivalent focus, keyboard, and touch activation without making descriptions hover-only.
-Use visible control labels, focus indicators, and readable contrast around visual previews.
-Define motion timing, expansion geometry, mobile behavior, screenshots, and descriptions during design discovery.
-Do not treat a temporary setup page as approval of typography, palette, layout, or animation direction.
-
-### First inspiration-browser release
-
-Confirmed core: two separate sections/tabs. Useful Sites contains a compact
-scrollable list whose entries expand in place on hover, with useful preview
-information. Inspiration contains interesting designs, design solutions, short
-animation videos, and interactive website examples. Exact tab names are provisional.
-
-The reference's [list view](https://designeer.xyz/inspiration?view=list) was inspected
-on 2026-10-28 and shows a list beside a larger preview area. On 2026-10-29 the
-user chose the original expanding list rather than that adjacent-preview arrangement.
-
-Resolve these before implementation: actual launch entries, source and media
-handling, click behavior, submission fields/email flow/storage and review UI,
-the exact category taxonomy, and final browse-control presentation.
-The exact geometry of expansion, palette, typography, and motion timing remain open.
-Authenticated visitor link submissions and owner approval are included in V1.
-Private account favorites are also selected for V1; folders and additional
-reference-site features remain deferred.
-Graphics engine selection and agent integration remain later work.
-
-### Proposed media and interaction requirements
-
-- Expose the two sections as accessible navigation or tabs according to routing.
-- Preserve readable content, scroll control, and focus during row expansion.
-- Give keyboard focus and touch an equivalent way to inspect expanded site entries.
-- Represent short clips with useful poster/fallback content and accessible playback
-  controls. Whether clips autoplay or require interaction is still a design decision.
-- Load media on demand and pause offscreen or background-tab playback. Agree an
-  active-playback budget when selecting representative launch clips.
-- Respect reduced motion in both interface transitions and preview playback.
-- Distinguish a link to an interactive website from an interactive embed or local demo;
-  the user has not yet selected among those behaviors.
-- Preserve source/creator attribution and provide an understandable fallback when
-  preview media is unavailable. Do not require a live embed for every external entry.
-
-## 9. Validation and release
-
-Required local checks are `pnpm lint`, `pnpm typecheck`, and `pnpm build`.
-The typecheck script generates Next.js route types, then runs TypeScript without emitting files.
-
-Setup verification on 2026-10-27:
-
-| Check | Result |
+| Endpoint | Behavior |
 | --- | --- |
-| Dependency installation and lockfile | Passed |
-| `pnpm lint` | Passed with zero warnings |
-| `pnpm typecheck` | Passed |
-| Production `next build` | Passed; `/` and the default not-found page prerendered |
-| Temporary production HTTP smoke check | Passed: `/` returned 200 with the expected title/content, compiled Tailwind CSS returned 200, and an unknown route returned 404 |
+| `GET /api/me` | Current user or null, owner flag, Google availability |
+| `GET /api/entries` | Starter entries plus approved submissions only |
+| `GET/POST /api/favorites` | Current account's saved IDs and save/remove mutation |
+| `GET /api/submissions` | Members' own records; all records for the owner |
+| `POST /api/submissions` | Authenticated URL/title/description/section/category; always pending |
+| `PATCH /api/submissions/:id` | Owner-only approved/rejected decision |
+| `/api/auth/*` | Better Auth identity/session operations |
 
-The first build attempts hit a local sandbox restriction in the CSS worker.
-A direct Next.js CLI retry with a clean generated `.next` cache and local worker
-access completed successfully; no application or bundler workaround was needed.
-The temporary verification server was stopped afterward. Browser viewport and
-interaction checks remain for the product UI phase; no browser QA is claimed here.
+Server session validation, not client state or a cookie's mere presence, authorizes private
+operations. Application mutations require the configured same origin and JSON bodies, with
+bounded input sizes and HTTP(S) URLs without embedded credentials. User IDs, submitter
+identity, and publication status come from trusted server state. The server does not fetch
+submitted URLs or scrape metadata. Full field limits/errors are in [BACKEND.md](./BACKEND.md).
 
-When product features arrive, verify direct routes, unknown slugs, keyboard/touch behavior,
-preview/export parity, clipboard feedback, reduced motion, and graphics cleanup as applicable.
-For submissions, verify that signed-out visitors cannot submit, ordinary members
-cannot approve, pending content remains unpublished, and owner approval makes the
-intended entry available. Check the selected browsing-access rule separately.
-Verify search/filter/sort composition, clear and empty states, saved-item persistence,
-account isolation, and exclusion of unpublished entries from results and counts.
-Add targeted automated tests when logic complexity or regressions justify them.
+Submission receipt is distinct from publication. The member account dialog shows status;
+`/review` offers pending/all/approved/rejected filters, author/source context, decision
+feedback, and refresh/error states. Approval publishes the link; rejecting an approved link
+removes it from the public collection and returned saved results. Favorites are unique per
+user/entry, account-private, and filtered to currently published content.
 
-Deployment is TBD: no host, domain, production environment, or publishing workflow has been selected.
-Preserve a standard `next build` / `next start` path until hosting requirements are known.
-Do not assume static export compatibility solely because initial content is stored locally.
-Update the PRD, this document, and discovery decisions together as requirements become concrete.
+## 7. Configuration, storage, and deployment
+
+Copy `.env.example` to the ignored `.env.local`. Set a stable `BETTER_AUTH_SECRET` of at
+least 32 characters, the exact `BETTER_AUTH_URL`, the private owner address, and optionally
+Google credentials. `DATABASE_PATH` defaults to `.data/library.sqlite` relative to the
+process working directory. A missing development secret is ephemeral and loses sessions
+across restart; production requires a secret. Restart after changing configuration.
+
+Database initialization is lazy and shared across development reloads. Better Auth migration
+planning and versioned library migrations run within one SQLite write transaction. Unsafe
+auth schema changes stop initialization for review. Existing account data must not be
+silently rebuilt during an upgrade; future application schema changes need a new migration.
+
+Deployment remains unselected. The Node runtime needs a persistent writable database volume
+and a stable origin/secret. Ephemeral filesystems or independent unsynchronized SQLite
+replicas do not provide durable shared accounts. Use a SQLite-aware backup, or stop the
+process before copying database/journal files. No static-export compatibility is claimed.
+
+## 8. Validation and remaining setup
+
+Run from the repository root:
+
+```sh
+pnpm lint
+pnpm typecheck
+node --import tsx --test src/features/discovery/query.test.ts
+node --import tsx --test scripts/backend.test.ts
+pnpm build
+```
+
+The query suite covers combined filters/search/Saved state, stable sorting, and URL parsing.
+Backend integration tests use real auth handlers/sessions and an isolated temporary database;
+they cover guest/member/owner gates, reserved owner identity, private favorites, pending and
+approved publication, rejection, input/origin validation, persistence, migrations, and revoked
+sessions. They do not operate on the local app database or test Google's external exchange.
+
+The current local results and remaining verification limits are recorded in
+[VALIDATION.md](./VALIDATION.md). Passing implementation checks is distinct from public release readiness.
+Browser validation should cover both collections, keyboard/touch expansion, reduced motion,
+video controls, auth handoff, saving, submit/review feedback, responsive layouts, and source
+links. Configure and test Google separately. Before public deployment, provision the owner,
+replace/review starter content and rights, select persistent hosting, and check the real origin.
+
+## 9. Later agent library and graphics work
+
+Codex is the first target for reusable design rules/colors, section templates, animations,
+skills, and shader resources. Automatic search remains a desired workflow; discovery,
+bootstrap, protocol, packaging, and licensing are unresolved. No agent-facing page,
+manifest/MCP service, shader renderer, asset exporter, or installable skill is implemented.
+
+Keep future delivery independent of visual layouts. Preview/export values should derive from
+one configuration. When graphics are introduced, follow `src/shaders/README.md`: client-only
+initialization, on-demand loading, reduced-motion/static alternatives, offscreen/hidden pause,
+bounded resolution, cleanup/disposal, and context-loss/unsupported-renderer fallbacks.
+No graphics engine or WebGPU support baseline has been selected.

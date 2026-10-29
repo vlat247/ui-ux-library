@@ -1,97 +1,121 @@
 # ui-ux-library
 
-A Next.js foundation for shaders, reusable design presets, and curated inspiration
-that people and coding agents can use in their own projects.
+A design discovery library built with Next.js App Router, React, TypeScript, Tailwind CSS 4,
+Better Auth, and SQLite through Node.js 24's `node:sqlite`.
+The local V1 is implemented. Deployment and the owner's initial collection remain open.
+Reusable gradients, shaders, design presets, and Codex delivery are later phases.
 
-**Current phase:** product discovery; the project foundation is complete. The
-first release will have a Useful Sites tab with an expanding compact list, and an
-Inspiration tab for designs, design solutions, short animation videos, and
-interactive websites (working names). An agent-focused page for Codex follows.
-The home page is a neutral placeholder. Final design, launch content,
-shader runtime, export formats, and agent delivery mechanism remain to be defined.
+## Local V1
+
+- Public **Inspiration** collection with detail previews and three playable original motion studies.
+- **Useful Sites** directory with compact rows that expand on hover, keyboard focus, or touch.
+- Metadata search, category filters, Inspiration content-type filters, and Curated / Recently added sorting.
+- Private account-saved favorites with a Saved filter.
+- Email/password accounts and optional Google sign-in.
+- Signed-in link submissions, account status tracking, and an owner-only review queue at `/review`.
+  New submissions stay pending until approved; rejecting a published submission removes it from browsing.
+- Responsive layouts, visible keyboard focus, reduced-motion support, video controls,
+  and playback pausing when previews leave the screen or the tab becomes hidden.
+
+The 16 editable seed suggestions contain 10 Useful Sites, three original motion studies,
+and three linked interactive websites, awaiting the owner's collection. External previews are original illustrated covers;
+there are no fabricated X/Twitter posts. See [content provenance](docs/CONTENT.md).
 
 ## Start locally
 
-Use Node.js 24 (see `.nvmrc`) and pnpm 10.29.3 (see `packageManager`).
+Use Node.js 24 (`.nvmrc`) and pnpm 10.29.3 (`packageManager`).
 
 ```sh
 nvm use
 pnpm install
+cp .env.example .env.local
+openssl rand -hex 32
+```
+
+If `.env.local` already exists, keep it and edit it rather than copying over it. Configure before starting:
+
+| Variable | Configuration |
+| --- | --- |
+| `BETTER_AUTH_SECRET` | Paste the generated random secret; at least 32 characters |
+| `BETTER_AUTH_URL` | Exact app origin, normally `http://localhost:3000` locally |
+| `DATABASE_PATH` | Defaults to `.data/library.sqlite`, relative to the project root |
+| `OWNER_EMAIL` | Set the exact owner's address privately to enable owner access |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Optional; configure both for Google sign-in |
+
+```sh
 pnpm dev
 ```
 
-Open the local URL printed by Next.js, normally [localhost:3000](http://localhost:3000).
-No environment variables or external services are required for this scaffold.
+Open the URL printed by Next.js, normally [localhost:3000](http://localhost:3000).
+Keep `BETTER_AUTH_URL` aligned with that origin. Restart after configuration changes.
+The database initializes on the first backend request. Environment files and `.data/`
+are ignored by Git; keep secrets and the owner's address out of public documentation.
+
+## Owner access and Google sign-in
+
+After setting `OWNER_EMAIL`, create the local owner account from an interactive terminal:
+
+```sh
+pnpm owner:create
+```
+
+Enter and confirm your own password at the hidden prompts, then use ordinary email
+sign-in and open `/review`. The command marks the configured identity verified and
+refuses to replace an existing account. Public signup reserves the owner address;
+there is no first-user promotion. Owner access requires the configured email and
+a verified identity. See [backend setup](docs/BACKEND.md) for details.
+
+Google sign-in uses Better Auth's OAuth flow and needs real provider credentials.
+Register `<BETTER_AUTH_URL>/api/auth/callback/google` as its callback, for example
+`http://localhost:3000/api/auth/callback/google`. The Google button is disabled until
+both credentials are configured. The external OAuth exchange still needs validation
+with those credentials; a Google-verified matching owner identity can access review.
 
 ## Project structure
 
 ```text
 src/
-  app/                  Next.js routes, layout, and global styles
-  components/
-    ui/                 Shared interface components
-    previews/           Future interactive effect previews
+  app/                  App Router pages, API routes, and styles
+  components/           Shared UI and dialogs
   features/
-    library/            Initial library metadata types
-    inspiration/        Initial curated-site metadata types
-  content/              Empty typed collections, independent of renderers
-  registry/             Future reusable effect and preset implementations
-  shaders/              Graphics runtime boundary and lifecycle guidance
-  lib/                  Shared site metadata and utilities
-public/
-  previews/             Future preview and fallback media
-docs/
-  PRD.md                Product direction, scope, and acceptance criteria
-  TRD.md                Architecture, technical requirements, and open choices
-  DISCOVERY.md          Answers, decision record, and later questions
+    discovery/          Browsing UI, filters, previews, and query tests
+    account/            Authentication, submissions, and owner review UI
+  content/              Serializable seed metadata
+  lib/server/           Authentication, SQLite, validation, and publication rules
+  registry/             Boundary for future reusable effects and presets
+  shaders/              Future graphics runtime and lifecycle guidance
+public/previews/        Original MP4 studies and JPEG posters
+scripts/                Owner bootstrap, backend tests, and preview generation
+docs/                   Product, technical, discovery, backend, and content records
 ```
 
-Keep authored metadata serializable. Load graphics and browser APIs only through
-client preview components. The initial metadata types are intentionally minimal;
-publication will need an agreed format, dependencies, provenance, and licensing.
+Keep content independent of rendering code. Keep browser interaction in Client Components
+and routes/layouts on the server by default. Follow `src/shaders/README.md` for graphics code.
 
-## Product direction
-
-- Reusable shaders, gradients, design presets, and design instructions.
-- Design rules, built-in colors, animations, and reusable sections for agents.
-- Codex first, with automatic library search as the desired later workflow.
-- A separate Useful Sites tab with a compact, scrollable list and animated row expansion.
-- Another tab for interesting designs, design solutions, short animation clips,
-  interactive website examples, and cool design posts from X/Twitter.
-- An initial owner-curated collection, plus link submissions from signed-in
-  visitors. Submissions become public only after the owner's approval.
-- Google and email sign-in; email flow and auth provider remain to be selected.
-- Search, category/content-type filters, Curated/Recently added sorting, and
-  account-saved favorites with a Saved filter.
-- Pleasant browsing with polished visual design and motion.
-
-The inspiration interaction and all other product screens are future work.
-[Designeer](https://designeer.xyz/) is the current reference; the user selected
-the original expanding list. Final visual direction remains under discussion.
-See the [PRD](docs/PRD.md), [TRD](docs/TRD.md), and [discovery notes](docs/DISCOVERY.md).
-
-## Commands
+## Commands and validation
 
 | Command | Purpose |
 | --- | --- |
-| `pnpm dev` | Start the development server |
+| `pnpm dev` | Start development |
 | `pnpm lint` | Run ESLint with zero warnings allowed |
-| `pnpm typecheck` | Generate Next.js route types and run TypeScript |
+| `pnpm typecheck` | Generate route types and check TypeScript |
 | `pnpm check` | Run lint and type checking |
-| `pnpm build` | Produce a production build |
-| `pnpm start` | Serve the production build |
+| `pnpm test` | Run discovery query and isolated backend behavior tests |
+| `pnpm build` / `pnpm start` | Build and serve production locally |
+| `pnpm owner:create` | Provision the explicitly configured owner |
 
-No behavior test suite is included yet because product behavior has not been
-implemented. Add focused tests with the first meaningful feature logic.
+Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build` for application changes.
+Tests can also run individually with `node --import tsx --test scripts/backend.test.ts`
+or `node --import tsx --test src/features/discovery/query.test.ts`.
+Backend tests use a temporary database rather than the local app database.
+See [local verification results](docs/VALIDATION.md) for the browser checks and remaining limits.
 
-## Foundation
+## Current limits
 
-Next.js App Router, React, strict TypeScript, Tailwind CSS 4, ESLint, and pnpm.
-The lockfile records installed versions. System fonts keep builds independent of
-font download services. The current theme follows the OS and is provisional.
+No public deployment is configured. Production SQLite needs a persistent writable volume
+and shared database state; ephemeral serverless storage is insufficient. Ordinary email
+verification delivery, SMTP, password reset delivery, automatic social/media import,
+agent presets, and a shader runtime are not implemented. Email/password accounts work locally.
 
-The setup follows the [Next.js installation guide](https://nextjs.org/docs/app/getting-started/installation)
-and [Tailwind Next.js integration](https://tailwindcss.com/docs/installation/framework-guides/nextjs).
-Accounts and owner approval are required for submissions; their implementation,
-email sign-in flow, auth provider, storage, deployment, licensing, and monetization
-remain open. Public browsing with login for saving/submitting is the proposed default.
+Continue with the [PRD](docs/PRD.md), [TRD](docs/TRD.md), [discovery notes](docs/DISCOVERY.md),
+[backend contract](docs/BACKEND.md), and [content provenance](docs/CONTENT.md).

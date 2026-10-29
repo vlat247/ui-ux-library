@@ -1,17 +1,10 @@
-import { siteConfig } from "@/lib/site";
+import { seedEntries } from "@/content/entries";
+import { DiscoveryApp } from "@/features/discovery/discovery-app";
+import { parseQuery } from "@/features/discovery/query";
 
-export default function Home() {
-  return (
-    <main className="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center px-6 py-16">
-      <h1 className="text-3xl font-semibold tracking-tight">{siteConfig.name}</h1>
-      <p className="mt-4 max-w-xl leading-7 text-muted">
-        Shaders, reusable design presets, and curated inspiration for people
-        and coding agents.
-      </p>
-      <p className="mt-8 border-t border-line pt-6 text-sm leading-6 text-muted">
-        Project foundation. The interface and first collection will follow the
-        product brief.
-      </p>
-    </main>
-  );
+export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const params = await searchParams;
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) if (typeof value === "string") query.set(key, value);
+  return <DiscoveryApp initialEntries={seedEntries} initialQuery={parseQuery(query)} />;
 }

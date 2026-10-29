@@ -1,8 +1,8 @@
 # ui-ux-library — Product discovery
 
-Status: two core browsing areas recorded; discovery continues · Updated: 2026-10-29
+Status: local V1 implemented; content and external setup continue · Updated: 2026-10-29
 
-The user has confirmed Google/email sign-in and delegated selection of useful V1 browsing tools. The selected set is recorded below, alongside the two core areas and authenticated, owner-approved submissions. Names/routes remain provisional. Current work is discovery and specification; email flow, provider, source-media display, entry actions, hosting, and styling remain open.
+The local V1 now implements both collections, browsing tools, account favorites, real email/password authentication, pending submissions, and owner review. Better Auth and Node.js SQLite are implementation choices; Google/email support and owner approval are user requirements. Google credentials, private owner bootstrap, the intended collection, and public deployment setup remain. Historical discovery answers are retained below; current implementation notes supersede earlier open technical choices.
 
 ## First discussion — answered or deferred
 
@@ -30,7 +30,7 @@ The user has confirmed Google/email sign-in and delegated selection of useful V1
 
 **2026-10-28 reference:** the user supplied [designeer.xyz](https://designeer.xyz) and wants something similar.
 
-**2026-10-29 clarification:** keep the original list idea for Useful Sites: entries expand within the list on hover, with beautiful animation, previews, and information. The site should be pleasant to look at and use. Palette, typography, and exact motion timing are not yet selected. Equivalent keyboard/touch access and reduced-motion behavior are proposed accessibility requirements.
+**2026-10-29 clarification:** keep the original list idea for Useful Sites: entries expand within the list on hover, with beautiful animation, previews, and information. The site should be pleasant to look at and use. The implementation uses dark neutral surfaces, restrained violet accents, system type, keyboard/touch equivalents, and reduced-motion behavior; visual refinement remains possible.
 
 ### D-04 — What should design presets contain, and how should agents use them?
 
@@ -46,7 +46,7 @@ The user has confirmed Google/email sign-in and delegated selection of useful V1
 
 **Confirmed answer on 2026-10-28:** ship the **inspiration browser first**, followed by the **agent-focused page**. Shader rendering, reusable asset exports, skills, and Codex integration belong to later work.
 
-**2026-10-29 clarification:** the first release has two core browsing tabs/sections: Useful Sites and Inspiration. Core content and browsing tools are resolved below; entry behavior and media delivery remain open.
+**2026-10-29 clarification:** the first release has two core browsing tabs/sections: Useful Sites and Inspiration. Both are implemented at `/` with section/query state; the agent-focused page remains later work.
 
 ### D-12 — Which list and preview relationship should the reference inform?
 
@@ -63,27 +63,27 @@ The user has confirmed Google/email sign-in and delegated selection of useful V1
 - **Useful Sites** — useful website links in the compact hover-expanding list.
 - **Inspiration** — interesting designs/design solutions, short animation videos, and interactive website examples.
 
-These names and routes are working labels. The Inspiration layout is not selected as a feed or grid. Interactive website examples do not by themselves imply a live embed. Short animation clips for inspiration are V1 content; reusable animations and agent design instructions remain later-phase resources.
+The implementation uses a responsive Inspiration grid with detail previews and explicit external source links, without live embeds. Short animation clips for inspiration are V1 content; reusable animations and agent design instructions remain later-phase resources. The starter contains 16 editable suggestions, including three original motion studies; the owner has not yet supplied the intended collection or specific X posts.
 
 **Source clarification on 2026-10-29:** “design form X” means posts with interesting designs from X/Twitter. No automatic X import, API integration, or scraping is selected.
 
 ### D-17 — Does X mean X/Twitter?
 
-**Confirmed answer on 2026-10-29:** yes, posts with interesting designs from Twitter. Displaying source links, previews, or embeds remains a separate decision.
+**Confirmed answer on 2026-10-29:** yes, posts with interesting designs from Twitter. V1 uses source links and authored/approved previews; no X posts, automatic import, or social embeds are fabricated in the starter.
 
 ### D-11 — Who supplies the initial collection, and can visitors contribute?
 
-**Confirmed answer on 2026-10-29:** the owner supplies the initial collection, and visitors have an option to submit links in V1. The follow-up answer below resolves submission access and publication; fields, storage, and detailed status UX remain open. No external submission service is selected.
+**Confirmed answer on 2026-10-29:** the owner supplies the initial collection, and visitors can submit links in V1. The implemented form collects URL, title, description, section, and category; SQLite stores pending/approved/rejected status. The member account dialog shows their submissions. No media upload/import or external submission vendor is used.
 
 ### D-18 — Do submissions need review and an account?
 
-**Confirmed answer on 2026-10-29:** submitters must be signed in, and submissions need the owner's approval before publication. Unapproved submissions stay out of public collections, and only the owner can approve them. Provider/storage choices, status labels, and rejection UX remain open. Sign-in options and the proposed browsing-access default follow below.
+**Confirmed answer on 2026-10-29:** submitters must be signed in, and submissions need the owner's approval before publication. This is implemented with real sessions, approved-only public queries, and owner-only decisions at `/review`. Unapproved entries stay private; members see only their own history. Owner access requires a verified identity matching private `OWNER_EMAIL`, with no first-user promotion.
 
 ### D-19 — Which sign-in methods should be supported?
 
-**User-confirmed on 2026-10-29:** Google and email. Email/password versus an email code or link, and the auth provider, remain open.
+**User-confirmed on 2026-10-29:** Google and email. **Implementation choice:** Better Auth with real email/password signup/sign-in and optional Google OAuth. Google needs provider credentials and an external exchange test; no email code/link, SMTP verification, or reset-email delivery is configured.
 
-**Assistant-proposed default:** public browsing, with sign-in to save favorites or submit links. Public browsing was not explicitly confirmed by the user.
+**Implemented default selected during development:** public browsing, with sign-in to save or submit. This remains distinct from the user's explicit account requirement for submissions.
 
 ### D-15 — Which browsing tools belong in V1?
 
@@ -99,18 +99,22 @@ These are historical reference observations, not this project's feature specific
 
 Reviewed again on 2026-10-29: [Designeer Inspiration](https://designeer.xyz/inspiration) and its search UI expose cross-category search, category controls, favorites, Curated/Recently added/A to Z/Most viewed/Most visited ordering, a color filter, list/tile switching, and folders. Account behavior and favorite syncing were not tested. The selected V1 set above deliberately uses only the relevant subset.
 
-## Current work boundary
+## Current implementation and setup
 
-Continue discovery and update the product/technical documents against the existing Next.js foundation. Keep the neutral placeholder while the version-one brief is clarified. Product screens, final visual design, and browsing interactions follow this specification work; shader rendering and agent integration follow version one.
+V1 UI, APIs, real sessions, SQLite persistence, account favorites, and owner review are implemented. The collection includes 10 useful sites, three original local MP4 studies/posters, and three linked interactive websites. Details and provenance are in [CONTENT.md](./CONTENT.md). These are starter suggestions, not the owner's supplied content.
+
+Set the ignored local environment using `.env.example`. The exact owner address belongs only in private configuration; public docs contain no real owner email or password. The owner must run `pnpm owner:create` and choose their own password, or use a matching Google-verified identity after OAuth setup. No owner password was created as part of this implementation. See [BACKEND.md](./BACKEND.md).
+
+Before public deployment, choose persistent hosting/storage, configure the stable origin/secret and Google project, review the initial collection/media rights, and finish the deployment/browser checks. Shader rendering and agent delivery remain later work.
 
 ## Follow-up decisions, in priority order
 
 | ID | Topic | Questions to resolve | Why it matters |
 | --- | --- | --- | --- |
-| D-20 | Email flow and provider — V1 | Should email sign-in use a password, one-time code, or link? Which auth provider fits the chosen hosting/storage? | Resolves implementation of the confirmed Google/email options. Public browsing remains a proposed default. |
-| D-14 | Entry actions and media — V1 | Does selecting an entry open details or visit its source? How should Useful Sites behave on touch? Where will short clips come from, and should they play from hosted files or embeds? Should interactive examples link out or also have live embeds? | Resolves navigation and media delivery while preserving the confirmed in-list expansion and content categories. |
-| D-07 | Access and license | Is version one free/public, gated, paid, or undecided? What rights cover preview media? Later, what license covers design resources/skills and commercial reuse? | Resolves publication and access needs separately for each phase. |
-| D-09 | Hosting and persistence | Where should it deploy, and which storage should support accounts, private favorites, and submissions? | Chooses infrastructure for the selected persistent capabilities; no vendor is selected. |
+| D-20 | Google and owner setup | Configure the Google project/callback and let the owner provision their private account. | Better Auth email/password is implemented; external credentials and the owner's password are not supplied. |
+| D-14 | Intended collection and source media | Which owner-provided links/X posts should replace or extend the starter? Which preview media can be displayed with appropriate attribution/permission? | Current interactions use detail previews and source links; content remains editable. |
+| D-07 | Content rights and access policy | What rights cover contributed preview media and later reusable assets/skills? Is monetization needed later? | Current browsing is public; no payment or media-import service exists. |
+| D-09 | Production hosting | Where should the Node app and persistent SQLite volume run, and how will backups be handled? | Local SQLite is implemented; production storage/hosting is not configured. |
 | D-08 | Technical constraints | Which browsers/devices must V1 support? Later, which graphics runtimes and mobile shader previews are acceptable? | Defines the V1 interaction matrix while keeping graphics decisions in their later phase. |
 | D-10 | Success and ownership | What would make the inspiration browser useful at first release? Who maintains it, and what time/content-production constraints apply? | Sets validation criteria and sustainable scope. |
 | D-16 | Codex discovery and packaging — later | How should Codex first discover the library? What should automatic search retrieve, and when? Which preset/section/animation formats and delivery mechanism will it understand? | Defines bootstrap and protocol without treating the tentative search preference as a technical choice. |
@@ -118,7 +122,7 @@ Continue discovery and update the product/technical documents against the existi
 
 ## Decision record
 
-Distinguish direct user decisions from selections made under the user's delegation. Proposed defaults remain labelled as proposals.
+Distinguish direct user decisions from development choices. Earlier rows record discovery at that time; C-24–C-26 supersede the earlier open provider, storage, layout, and owner-provisioning details.
 
 | ID | Date | Decision | Evidence/status |
 | --- | --- | --- | --- |
@@ -140,15 +144,18 @@ Distinguish direct user decisions from selections made under the user's delegati
 | C-16 | 2026-10-29 | Inspiration includes interesting designs/design solutions, short animation videos, and interactive website examples | Core categories confirmed. Feed/grid layout, clip sources, and link-only versus embedded examples remain open. |
 | C-17 | 2026-10-29 | The product should be pleasant to look at and use, with beautiful styling and animation | Quality goal confirmed; palette, typography, and detailed motion remain open. |
 | C-18 | 2026-10-29 | Inspiration includes design posts from X/Twitter | Resolves the earlier X wording; no automatic import/API/scraping selected. |
-| C-19 | 2026-10-29 | Owner supplies the initial curated collection; visitors can submit links in V1 | Submission access and approval subsequently resolved by C-20/C-21; fields and storage remain open. |
-| C-20 | 2026-10-29 | Visitor link submission requires a signed-in account | Confirmed; sign-in options subsequently resolved by C-22. Provider and browsing access remain open. |
-| C-21 | 2026-10-29 | Visitor submissions need owner approval before publication | Confirmed; detailed review/status/rejection UX remains open. |
-| C-22 | 2026-10-29 | Support Google and email sign-in | Explicit user choice; email/password versus code/link and provider remain open. |
+| C-19 | 2026-10-29 | Owner supplies the initial curated collection; visitors can submit links in V1 | Submission form/storage implemented; owner collection still awaited. |
+| C-20 | 2026-10-29 | Visitor link submission requires a signed-in account | Implemented; public browsing is the development default. |
+| C-21 | 2026-10-29 | Visitor submissions need owner approval before publication | Implemented with pending/approved/rejected status and owner-only review. |
+| C-22 | 2026-10-29 | Support Google and email sign-in | Explicit user choice; C-24 records the implementation. Google external setup remains. |
 | C-23 | 2026-10-29 | V1 uses scoped metadata search, category/type filters, Curated/Recently added sorting, private account favorites, Saved-only mode, clear states/counts, and source/creator links | Selected by the assistant under explicit user delegation, informed by direct reference review; see D-15. |
+| C-24 | 2026-10-29 | Implement Better Auth email/password, optional Google OAuth, and Node.js SQLite persistence | Development choice implementing the user's account requirements; no SMTP/reset delivery or live Google exchange claimed. |
+| C-25 | 2026-10-29 | Implement `/` with two query-driven collections and `/review` with owner moderation | Development choices: dark neutral/violet UI, responsive previews, public browsing, private saves, and real submission state. |
+| C-26 | 2026-10-29 | Reserve the configured owner identity and provision it locally with `pnpm owner:create` | Verified exact-email owner gate; no first-user promotion, public bootstrap endpoint, or preset owner password. |
 
 ## Material open decisions
 
-Release order, Codex as the first later-phase agent, core browsing areas/content, X/Twitter source, authenticated owner-approved submissions, Google/email sign-in, and the delegated V1 browsing-tool selection are resolved. Email flow/provider, the proposed public-browsing default, submission fields/storage/status UX, source-media display, entry actions, hosting, and final styling remain open. Later-phase formats, Codex bootstrap/protocol, licensing, and commercial reuse remain open without blocking V1.
+The local V1 choices are implemented rather than open proposals. Remaining setup is Google credentials/exchange verification, the owner's private password bootstrap, the intended collection and its rights, production hosting/storage, and final responsive/deployment validation. Visual/content refinement remains possible. Later-phase asset formats, Codex bootstrap/protocol, shader engine, licensing, and commercial reuse remain open.
 
 ## How answers become the specification
 

@@ -1,12 +1,12 @@
 # Project context
 
 Read `docs/PRD.md`, `docs/TRD.md`, and `docs/DISCOVERY.md` before changing product
-scope. The Next.js foundation is complete; product discovery is ongoing. The first
+scope. The local Next.js V1 is implemented; visual direction remains provisional. The first
 release is an inspiration browser with two separate tabs: a Useful Sites directory
 using the original compact list with entries expanding on hover, and an Inspiration
 collection for designs, design solutions, short animation videos, and interactive
 websites (tab names provisional). The agent-focused page for Codex comes afterward.
-Designeer is a reference; current colors and the home page are provisional scaffolding.
+Designeer is a reference. Read PRODUCT.md and DESIGN.md for the current design direction.
 
 ## Boundaries
 
@@ -21,24 +21,28 @@ Designeer is a reference; current colors and the home page are provisional scaff
 - Accounts are required for V1 link submissions, and the owner must approve a
   submission before it is published. This does not establish a login requirement
   for browsing. Google and email are the selected sign-in methods; the email
-  flow and auth provider remain open, as do storage, deployment, shader engine,
-  payments, and licensing.
+  flow uses Better Auth email/password with optional Google OAuth. Node.js 24 SQLite
+  stores accounts, sessions, favorites, and submissions. Deployment storage, shader
+  engine, payments, and licensing remain open. Read docs/BACKEND.md before auth changes.
 - V1 browsing tools are metadata search, category/content-type filters, Curated
   and Recently added sorting, and private account-saved favorites with a Saved
-  filter. Public browsing is the proposed default; sign-in is needed to save/submit.
-- The expanding Useful Sites list will need equivalent pointer, keyboard, and
-  touch access. The media collection needs explicit playback and offscreen behavior.
+  filter. Browsing is public; sign-in is needed to save/submit.
+- Preserve equivalent pointer, keyboard, and touch access in the expanding Useful
+  Sites list. Media previews pause offscreen and respect reduced motion.
 - Inspiration includes cool design posts from X/Twitter. The owner supplies the
-  initial collection. V1 needs authenticated submissions and an owner review flow;
+  initial collection. V1 has authenticated submissions and an owner review flow;
   pending submissions must stay outside public collections.
+- Owner access requires the exact configured email and a verified identity. Public
+  signup cannot claim OWNER_EMAIL. Never add first-user promotion or a public owner
+  bootstrap endpoint. Keep environment files and local databases out of Git.
 - X API access, automatic social import, and media ingestion are not selected.
 - Follow shader lifecycle and fallback requirements in `src/shaders/README.md`
   when introducing graphics code.
 
 ## Validation
 
-Use pnpm. Run `pnpm lint`, `pnpm typecheck`, and `pnpm build` for scaffold or
-application changes. Add behavior tests when meaningful product logic exists.
+Use pnpm. Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build` for
+application changes. Add behavior tests when meaningful product logic changes.
 Keep the PRD and TRD accurate about what is implemented versus proposed.
 
 <!-- BEGIN:nextjs-agent-rules -->
